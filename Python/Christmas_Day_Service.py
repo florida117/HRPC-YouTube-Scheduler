@@ -16,13 +16,13 @@ logging.basicConfig(level=logging.INFO)
 # Function for OAuth authentication
 def authenticate(home_dir):
     SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
-    credentials_file = home_dir + '/yt-dlp/HRPC_Python/token.pickle'
+    credentials_file = home_dir + '/git/HRPC-YouTube-Scheduler/Python/token.pickle'
 
     if os.path.exists(credentials_file):
         with open(credentials_file, 'rb') as token:
             credentials = pickle.load(token)
     else:
-        flow = InstalledAppFlow.from_client_secrets_file(home_dir + '/yt-dlp/HRPC_Python/client_secret.json', scopes=SCOPES)
+        flow = InstalledAppFlow.from_client_secrets_file(home_dir + '/git/HRPC-YouTube-Scheduler/Python/client_secret.json', scopes=SCOPES)
         credentials = flow.run_local_server(port=8080)
         with open(credentials_file, 'wb') as token:
             pickle.dump(credentials, token)
@@ -173,12 +173,12 @@ def get_video_id(youtube):
     videos = response.get('items', [])
 
 def write_title(home_dir):
-    f = open(home_dir + "/yt-dlp/christmas_service_title.txt","w")
+    f = open(home_dir + "/git/HRPC-YouTube-Scheduler/Service_Details/christmas_service_title.txt","w")
     f.write("HRPC Christmas Morning Service" + " " + str(this_year))
     f.close()
 
 def write_broadcastid(broadcast_id, home_dir):
-    f = open(home_dir + "/yt-dlp/christmas_service_id.txt","w")
+    f = open(home_dir + "/git/HRPC-YouTube-Scheduler/Service_Details/christmas_service_id.txt","w")
     f.write(broadcast_id)
     f.close()
 

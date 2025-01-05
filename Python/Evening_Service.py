@@ -16,13 +16,13 @@ logging.basicConfig(level=logging.INFO)
 # Function for OAuth authentication
 def authenticate(home_dir):
     SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
-    credentials_file = home_dir + "/yt-dlp/HRPC_Python/token.pickle"
+    credentials_file = home_dir + "/git/HRPC-YouTube-Scheduler/Python/token.pickle"
 
     if os.path.exists(credentials_file):
         with open(credentials_file, 'rb') as token:
             credentials = pickle.load(token)
     else:
-        flow = InstalledAppFlow.from_client_secrets_file(home_dir + "/yt-dlp/HRPC_Python/client_secret.json", scopes=SCOPES)
+        flow = InstalledAppFlow.from_client_secrets_file(home_dir + "/git/HRPC-YouTube-Scheduler/Python/client_secret.json", scopes=SCOPES)
         credentials = flow.run_local_server(port=8080)
         with open(credentials_file, 'wb') as token:
             pickle.dump(credentials, token)
@@ -139,7 +139,7 @@ def create_live_broadcast(youtube, video_id, stream_id, home_dir):
     response = request.execute()
     broadcast_id = response["id"]
 
-    thumbnail_path = home_dir + "/yt-dlp/maxresdefault.jpg"
+    thumbnail_path = home_dir + "/git/HRPC-YouTube-Scheduler/maxresdefault.jpg"
     try:
         request = youtube.thumbnails().set(videoId=broadcast_id, media_body=MediaFileUpload(thumbnail_path))
         response = request.execute()
@@ -170,12 +170,12 @@ def get_video_id(youtube):
     videos = response.get('items', [])
 
 def write_title(home_dir):
-    f = open(home_dir + "/yt-dlp/evening_service_title.txt","w")
+    f = open(home_dir + "/git/HRPC-YouTube-Scheduler/Service_Details/evening_service_title.txt","w")
     f.write("HRPC Sunday Evening Service" + " " + str(next_sunday_day) + " " + str(next_sunday_month))
     f.close()
 
 def write_broadcastid(broadcast_id, home_dir):
-    f = open(home_dir + "/yt-dlp/evening_service_id.txt","w")
+    f = open(home_dir + "/git/HRPC-YouTube-Scheduler/Service_Details/evening_service_id.txt","w")
     f.write(broadcast_id)
     f.close()
 
@@ -184,7 +184,7 @@ def main():
     home_dir = os.path.expanduser("~")
 
     # Doesn't create an evening service if the text file is called eve_no.txt
-    file_path = home_dir + '/yt-dlp/HRPC_Python/'
+    file_path = home_dir + '/git/HRPC-YouTube-Scheduler/Python/'
     file_name = 'eve_no.txt'
     files_in_directory = os.listdir(file_path)
     if file_name in files_in_directory:
