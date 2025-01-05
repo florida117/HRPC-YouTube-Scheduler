@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Specify the directory containing the files
-TARGET_DIR_1="$HOME/yt-dlp/HRPC_Subtitles"
+TARGET_DIR_1="$HOME/git/HRPC-YouTube-Scheduler/Subtitles"
 
 # Find and delete .srt files older than 10 days
 find "$TARGET_DIR_1" -name "*.srt" -type f -mtime +10 -exec rm {} \;

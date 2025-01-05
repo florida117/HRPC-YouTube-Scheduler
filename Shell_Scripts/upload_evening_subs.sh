@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PATH=$PATH:/opt/homebrew/Cellar
-source $HOME/yt-dlp/HRPC_Python/.venv/bin/activate
+source $HOME/git/HRPC-YouTube-Scheduler/Python/.venv/bin/activate
 
 # Call python script to upload the subtitles
-python $HOME/yt-dlp/HRPC_Python/Evening_Subs.py
+python $HOME/git/HRPC-YouTube-Scheduler/Python/Evening_Subs.py

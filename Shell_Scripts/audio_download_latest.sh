@@ -2,13 +2,13 @@
 
 FFMPEG_BIN_PATH=$(echo /opt/homebrew/Cellar/ffmpeg/*/bin)
 
-PATH=$PATH:/usr/bin/:$HOME/yt-dlp/HRPC_Python/.venv/bin/:"$FFMPEG_BIN_PATH":/bin/
+PATH=$PATH:/usr/bin/:$HOME/git/HRPC-YouTube-Scheduler/Python/.venv/bin/:"$FFMPEG_BIN_PATH":/bin/
 
 # Set the YouTube channel URL
 CHANNEL_URL="https://www.youtube.com/@hrpcbangor/streams"
 
 # Set the path where you want to save the downloaded videos
-DOWNLOAD_PATH1="$HOME/yt-dlp/Audio"
+DOWNLOAD_PATH1="$HOME/git/HRPC-YouTube-Scheduler/Audio"
 DOWNLOAD_PATH2="$HOME/Documents/Church_Docs/HRPC_Audio/"
 
 # Fetch the latest video URL from the channel
