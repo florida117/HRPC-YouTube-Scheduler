@@ -142,7 +142,7 @@ def create_live_broadcast(youtube, video_id, stream_id, home_dir):
     response = request.execute()
     broadcast_id = response["id"]
 
-    thumbnail_path = home_dir + "/yt-dlp/maxresdefault.jpg"
+    thumbnail_path = home_dir + "/git/HRPC-YouTube-Scheduler/maxresdefault.jpg"
     try:
         request = youtube.thumbnails().set(videoId=broadcast_id, media_body=MediaFileUpload(thumbnail_path))
         response = request.execute()

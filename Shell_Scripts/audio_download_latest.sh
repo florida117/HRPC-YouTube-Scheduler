@@ -2,7 +2,7 @@
 
 FFMPEG_BIN_PATH=$(echo /opt/homebrew/Cellar/ffmpeg/*/bin)
 
-PATH=$PATH:/usr/bin/:$HOME/git/HRPC-YouTube-Scheduler/Python/.venv/bin/:"$FFMPEG_BIN_PATH":/bin/
+PATH=$PATH:/usr/bin/:$HOME/git/HRPC-YouTube-Scheduler/.venv/bin/:"$FFMPEG_BIN_PATH":/bin/
 
 # Set the YouTube channel URL
 CHANNEL_URL="https://www.youtube.com/@hrpcbangor/streams"
