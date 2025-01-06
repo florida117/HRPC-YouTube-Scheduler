@@ -16,13 +16,13 @@ logging.basicConfig(level=logging.INFO)
 # Function for OAuth authentication
 def authenticate(home_dir):
     SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
-    credentials_file = home_dir + "/yt-dlp/HRPC_Python/token.pickle"
+    credentials_file = home_dir + "/git/HRPC-YouTube-Scheduler/Python/token.pickle"
 
     if os.path.exists(credentials_file):
         with open(credentials_file, 'rb') as token:
             credentials = pickle.load(token)
     else:
-        flow = InstalledAppFlow.from_client_secrets_file(home_dir + "/yt-dlp/HRPC_Python/client_secret.json", scopes=SCOPES)
+        flow = InstalledAppFlow.from_client_secrets_file(home_dir + "/git/HRPC-YouTube-Scheduler/Python/client_secret.json", scopes=SCOPES)
         credentials = flow.run_local_server(port=8080)
         with open(credentials_file, 'wb') as token:
             pickle.dump(credentials, token)
@@ -51,8 +51,8 @@ next_sunday = today + timedelta(days=days_ahead)
 next_sunday_day = ordinal(next_sunday.day)
 next_sunday_month = calendar.month_name[next_sunday.month]
 
-# Set the time to 6:30 PM
-next_sunday = local_tz.localize(datetime(next_sunday.year, next_sunday.month, next_sunday.day, 18, 30, 0))   #next_sunday.replace(hour=18, minute=30, second=0, microsecond=0)
+# Set the time to 11 AM
+next_sunday = local_tz.localize(datetime(next_sunday.year, next_sunday.month, next_sunday.day, 11, 0, 0))   #next_sunday.replace(hour=11, minute=0, second=0, microsecond=0)
 
 # Convert to UTC
 scheduled_start_time = next_sunday.astimezone(pytz.UTC)
@@ -81,6 +81,7 @@ def create_live_stream(youtube):
         }
     )
     response = request.execute()
+    print (response["id"])
     return response["id"]
 
 # New function to set the video category
@@ -123,7 +124,7 @@ def create_live_broadcast(youtube, video_id, stream_id, home_dir):
         part="snippet,status,contentDetails",
         body={
             "snippet": {
-                "title": "HRPC Sunday Evening Service" + " " + str(next_sunday_day) + " " + str(next_sunday_month),
+                "title": "HRPC Sunday Morning Service" + " " + str(next_sunday_day) + " " + str(next_sunday_month),
                 "description": "Sunday Service from Hamilton Road Presbyterian Church",
                 "scheduledStartTime": scheduled_start_time_rfc3339,
             },
@@ -139,7 +140,7 @@ def create_live_broadcast(youtube, video_id, stream_id, home_dir):
     response = request.execute()
     broadcast_id = response["id"]
 
-    thumbnail_path = home_dir + "/yt-dlp/maxresdefault.jpg"
+    thumbnail_path = home_dir + "/git/HRPC-YouTube-Scheduler/maxresdefault.jpg"
     try:
         request = youtube.thumbnails().set(videoId=broadcast_id, media_body=MediaFileUpload(thumbnail_path))
         response = request.execute()
@@ -170,25 +171,18 @@ def get_video_id(youtube):
     videos = response.get('items', [])
 
 def write_title(home_dir):
-    f = open(home_dir + "/yt-dlp/evening_service_title.txt","w")
-    f.write("HRPC Sunday Evening Service" + " " + str(next_sunday_day) + " " + str(next_sunday_month))
+    f = open(home_dir + "/git/HRPC-YouTube-Scheduler/Service_Details/morning_service_title.txt","w")
+    f.write("HRPC Sunday Morning Service" + " " + str(next_sunday_day) + " " + str(next_sunday_month))
     f.close()
 
 def write_broadcastid(broadcast_id, home_dir):
-    f = open(home_dir + "/yt-dlp/evening_service_id.txt","w")
+    f = open(home_dir + "/git/HRPC-YouTube-Scheduler/Service_Details/morning_service_id.txt","w")
     f.write(broadcast_id)
     f.close()
 
 def main():
     # Sets the location of the home folder
     home_dir = os.path.expanduser("~")
-
-    # Doesn't create an evening service if the text file is called eve_no.txt
-    file_path = home_dir + '/yt-dlp/HRPC_Python/'
-    file_name = 'eve_no.txt'
-    files_in_directory = os.listdir(file_path)
-    if file_name in files_in_directory:
-       sys.exit()
 
     # Authenticate using OAuth
     credentials = authenticate(home_dir)
@@ -197,7 +191,7 @@ def main():
     youtube = create_youtube_client(credentials)
 
     # Create a live stream
-    stream_id = "JgRDQzkDs-GgkPgmjNx5Ng1600593527685052"  #create_live_stream(youtube) stream_id = create_live_stream(youtube)
+    stream_id = "JgRDQzkDs-GgkPgmjNx5Ng1600593527685052"  #create_live_stream(youtube)
 
     # Get the video ID
     video_id = get_video_id(youtube)

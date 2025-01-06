@@ -7,13 +7,13 @@ from googleapiclient.http import MediaFileUpload
 # Function for OAuth authentication
 def authenticate(home_dir):
     SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
-    credentials_file =home_dir + "/yt-dlp/HRPC_Python/token.pickle"
+    credentials_file = home_dir + "/git/HRPC-YouTube-Scheduler/Python/token.pickle"
 
     if os.path.exists(credentials_file):
         with open(credentials_file, 'rb') as token:
             credentials = pickle.load(token)
     else:
-        flow = InstalledAppFlow.from_client_secrets_file(home_dir + "/yt-dlp/HRPC_Python/client_secret.json", scopes=SCOPES)
+        flow = InstalledAppFlow.from_client_secrets_file(home_dir + "/git/HRPC-YouTube-Scheduler/Python/client_secret.json", scopes=SCOPES)
         credentials = flow.run_local_server(port=8080)
         with open(credentials_file, 'wb') as token:
             pickle.dump(credentials, token)
@@ -23,9 +23,9 @@ def authenticate(home_dir):
 def create_youtube_client(credentials):
     return build('youtube', 'v3', credentials=credentials)
 
-def delete_existing_subtitles(video_id, language):
+def delete_existing_subtitles(video_id, language, home_dir):
     #Delete existing subtitles for a specific language on a video
-    credentials = authenticate()
+    credentials = authenticate(home_dir)
     youtube = create_youtube_client(credentials)
     # List existing captions
     request = youtube.captions().list(
@@ -41,9 +41,9 @@ def delete_existing_subtitles(video_id, language):
             youtube.captions().delete(id=caption_id).execute()
             print(f"Deleted existing subtitle with ID: {caption_id}")
 
-def upload_subtitles(video_id, language, name, subtitle_file_path):
+def upload_subtitles(video_id, language, name, subtitle_file_path, home_dir):
     """Upload subtitle file to a YouTube video."""
-    credentials = authenticate()
+    credentials = authenticate(home_dir)
     youtube = create_youtube_client(credentials)
 
     body = {
@@ -70,17 +70,17 @@ if __name__ == '__main__':
     home_dir = os.path.expanduser("~")
 
     # Replace with your video ID, language, name, and path to your .srt file
-    f = open(home_dir + "/yt-dlp/morning_service_id.txt", "r")
+    f = open(home_dir + "/git/HRPC-YouTube-Scheduler/Service_Details/morning_service_id.txt", "r")
     temp1 = f.readline()
     VIDEO_ID = temp1.strip()
     f.close()
 
     LANGUAGE = 'en-GB'  # English (United Kingdom)
-    f = open(home_dir + "/yt-dlp/morning_service_title.txt", "r")
+    f = open(home_dir + "/git/HRPC-YouTube-Scheduler/Service_Details/morning_service_title.txt", "r")
     temp2 = f.readline()
     NAME = temp2.strip()
     f.close()
 
-    delete_existing_subtitles(VIDEO_ID, LANGUAGE)
+    delete_existing_subtitles(VIDEO_ID, LANGUAGE, home_dir)
     SUBTITLE_FILE_PATH = (home_dir + "/Documents/Church_Docs/HRPC_Subtitles/" + NAME + ".srt")
-    upload_subtitles(VIDEO_ID, LANGUAGE, NAME, SUBTITLE_FILE_PATH)
+    upload_subtitles(VIDEO_ID, LANGUAGE, NAME, SUBTITLE_FILE_PATH, home_dir)

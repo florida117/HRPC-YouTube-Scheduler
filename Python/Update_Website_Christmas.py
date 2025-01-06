@@ -1,5 +1,4 @@
 import requests
-from pathlib import Path
 import os
 from log_in import secrets
 
@@ -12,17 +11,12 @@ page_id = '8157'  # Replace with your page ID. For videos, 8157
 username = secrets.get('website_user_name')
 password = secrets.get('website_password')
 
-with open(home_dir + '/yt-dlp/morning_service_id.txt', 'r') as file:
+with open(home_dir + '/git/HRPC-YouTube-Scheduler/Service_Details/christmas_service_id.txt', 'r') as file:
     # Read the contents of the file
     video_url_1 = 'https://www.youtube.com/watch?v=' + file.read()
     
-with open(home_dir + '/yt-dlp/evening_service_id.txt', 'r') as file:
+with open(home_dir + '/git/HRPC-YouTube-Scheduler/Service_Details/evening_service_id.txt', 'r') as file:
     # Read the contents of the file
-    video_url_2 = 'https://www.youtube.com/watch?v=' + file.read()
-
-# If no evening service is schedules, this resets the url to a blank so that the website shows only a morning service
-no_evening = Path(home_dir + "/yt-dlp/eve_no.txt")
-if no_evening.exists():
     video_url_2 = ''
 
 # Format the video URLs as embedded links

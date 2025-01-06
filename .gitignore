@@ -4,3 +4,6 @@ HRPC_Python/log_in.py
 HRPC_Python/client_secret.json
 *.whisper
 *.m4a
+Python/client_secret.json
+Python/log_in.py
+Python/token.pickle
