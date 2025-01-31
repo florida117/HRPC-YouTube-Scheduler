@@ -50,6 +50,7 @@ if days_ahead <= 0:
 next_sunday = today + timedelta(days=days_ahead)
 next_sunday_day = ordinal(next_sunday.day)
 next_sunday_month = calendar.month_name[next_sunday.month]
+next_sunday_year = next_sunday.year
 
 # Set the time to 11 AM
 next_sunday = local_tz.localize(datetime(next_sunday.year, next_sunday.month, next_sunday.day, 11, 0, 0))   #next_sunday.replace(hour=11, minute=0, second=0, microsecond=0)
@@ -124,7 +125,7 @@ def create_live_broadcast(youtube, video_id, stream_id, home_dir):
         part="snippet,status,contentDetails",
         body={
             "snippet": {
-                "title": "HRPC Sunday Morning Service" + " " + str(next_sunday_day) + " " + str(next_sunday_month),
+                "title": "HRPC Sunday Morning Service" + " " + str(next_sunday_day) + " " + str(next_sunday_month) + " " + str(next_sunday_year),
                 "description": "Sunday Service from Hamilton Road Presbyterian Church",
                 "scheduledStartTime": scheduled_start_time_rfc3339,
             },
