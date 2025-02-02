@@ -173,7 +173,7 @@ def get_video_id(youtube):
 
 def write_title(home_dir):
     f = open(home_dir + "/git/HRPC-YouTube-Scheduler/Service_Details/morning_service_title.txt","w")
-    f.write("HRPC Sunday Morning Service" + " " + str(next_sunday_day) + " " + str(next_sunday_month))
+    f.write("HRPC Sunday Morning Service" + " " + str(next_sunday_day) + " " + str(next_sunday_month) + " " + str(next_sunday_year))
     f.close()
 
 def write_broadcastid(broadcast_id, home_dir):
