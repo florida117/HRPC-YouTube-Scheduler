@@ -11,11 +11,11 @@ page_id = '8157'  # Replace with your page ID. For videos, 8157
 username = secrets.get('website_user_name')
 password = secrets.get('website_password')
 
-with open(home_dir + '/git/HRPC-YouTube-Scheduler/Service_Details/christmas_service_id.txt', 'r') as file:
+with open(home_dir + '/git/HRPC-YouTube-Scheduler/Service_Details/good_friday_service_id.txt', 'r') as file:
     # Read the contents of the file
     video_url_1 = 'https://www.youtube.com/watch?v=' + file.read()
     
-with open(home_dir + '/git/HRPC-YouTube-Scheduler/Service_Details/evening_service_id.txt', 'r') as file:
+with open(home_dir + '/git/HRPC-YouTube-Scheduler/Service_Details/good_friday_service_id.txt', 'r') as file:
     # Read the contents of the file
     video_url_2 = ''
 
