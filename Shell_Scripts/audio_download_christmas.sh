@@ -27,5 +27,6 @@ if [ ! -f "$DOWNLOAD_PATH2$CHRISTMAS_VIDEO_NAME.m4a" ]; then
         yt-dlp -x --audio-format m4a -o "$DOWNLOAD_PATH1/%(title)s.%(ext)s" "https://www.youtube.com/watch?v=$CHRISTMAS_VIDEO_URL"
         # Copy to iCloud
         cp "$DOWNLOAD_PATH1/$CHRISTMAS_VIDEO_NAME.m4a" "$DOWNLOAD_PATH2"
+        
     fi
 fi
