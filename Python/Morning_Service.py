@@ -212,6 +212,6 @@ def main():
     write_broadcastid(broadcast_id, home_dir)
 
     print("Live broadcast has been successfully created and categorized as Nonprofits & Activism.")
-
+    #home_dir/hrpc_po.sh "Download of $EVENING_VIDEO_NAME finished successfully"
 if __name__ == "__main__":
     main()
