@@ -31,7 +31,7 @@ if [ ! -f "$DOWNLOAD_PATH2/$MORNING_VIDEO_NAME.m4a" ]; then
         # Copy to iCloud
         cp "$DOWNLOAD_PATH1/$MORNING_VIDEO_NAME.m4a" "$DOWNLOAD_PATH2/"
         ffmpeg -y -i "$DOWNLOAD_PATH1/$MORNING_VIDEO_NAME.m4a" -af "dynaudnorm=f=200:g=15, loudnorm=I=-16:TP=-1.5:LRA=8" -b:a 64k "$DOWNLOAD_PATH3/$MORNING_VIDEO_NAME.mp3"
-        New_Name_Morning="${MORNING_VIDEO_NAME/Service /Service Sermon }"
+        New_Name_Morning="${MORNING_VIDEO_NAME//Service /Service Sermon }"
         mv "$DOWNLOAD_PATH3/$MORNING_VIDEO_NAME.mp3" "$DOWNLOAD_PATH3/$New_Name_Morning.mp3"
         $HOME/hrpc_po.sh "Download of $MORNING_VIDEO_NAME finished successfully"
     fi
@@ -48,7 +48,7 @@ if [ ! -f "$DOWNLOAD_PATH2/$EVENING_VIDEO_NAME.m4a" ]; then
         # Copy to iCloud
         cp "$DOWNLOAD_PATH1/$EVENING_VIDEO_NAME.m4a" "$DOWNLOAD_PATH2/"
         ffmpeg -y -i "$DOWNLOAD_PATH1/$EVENING_VIDEO_NAME.m4a" -af "dynaudnorm=f=200:g=15, loudnorm=I=-16:TP=-1.5:LRA=8" -b:a 64k "$DOWNLOAD_PATH3/$EVENING_VIDEO_NAME.mp3"
-        New_Name_Evening="${EVENING_VIDEO_NAME/Service /Service Sermon }"
+        New_Name_Evening="${EVENING_VIDEO_NAME//Service /Service Sermon }"
         mv "$DOWNLOAD_PATH3/$EVENING_VIDEO_NAME.mp3" "$DOWNLOAD_PATH3/$New_Name_Evening.mp3"
         $HOME/hrpc_po.sh "Download of $EVENING_VIDEO_NAME finished successfully"
     fi
