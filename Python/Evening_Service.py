@@ -185,7 +185,7 @@ def main():
     home_dir = os.path.expanduser("~")
 
     # Doesn't create an evening service if the text file is called eve_no.txt
-    file_path = home_dir + '/git/HRPC-YouTube-Scheduler/Python/'
+    file_path = home_dir + '/git/HRPC-YouTube-Scheduler/Service_Details/'
     file_name = 'eve_no.txt'
     files_in_directory = os.listdir(file_path)
     if file_name in files_in_directory:
