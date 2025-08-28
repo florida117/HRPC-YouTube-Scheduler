@@ -28,7 +28,7 @@ LATEST_VIDEO_NAME=$(yt-dlp  --flat-playlist --skip-download   "$CHANNEL_URL" --p
         # Copy to iCloud
         cp "$DOWNLOAD_PATH1/$LATEST_VIDEO_NAME.m4a" "$DOWNLOAD_PATH2"
         ffmpeg -y -i "$DOWNLOAD_PATH1/$LATEST_VIDEO_NAME.m4a" -af "dynaudnorm=f=200:g=15, loudnorm=I=-16:TP=-1.5:LRA=8" -b:a 64k "$DOWNLOAD_PATH3/$LATEST_VIDEO_NAME.mp3"
-        New_Name_Latest="${LATEST_VIDEO_NAME/Service /Service Sermon }"
+        New_Name_Latest="${LATEST_VIDEO_NAME//Service /Service Sermon }"
         mv "$DOWNLOAD_PATH3/$LATEST_VIDEO_NAME.mp3" "$DOWNLOAD_PATH3/$New_Name_Latest.mp3"
         $HOME/hrpc_po.sh "Download of $LATEST_VIDEO_NAME finished successfully"
     fi
