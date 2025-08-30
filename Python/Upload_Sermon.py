@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     try:
         url = upload_to_wordpress(file_path)
-        msg = f"Sermon uploaded successfully:\n{os.path.basename(file_path)}\n{url}"
+        msg = f"Audio file uploaded successfully to website:\n{os.path.basename(file_path)}\n{url}"
         print(msg)
         send_notification(msg)
         sys.exit(0)
