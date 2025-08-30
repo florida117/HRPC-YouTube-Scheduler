@@ -2,12 +2,12 @@
 set -euo pipefail
 
 # ========= CONFIG =========
-API_KEY_FILE="/Users/odysseus/git/HRPC-YouTube-Scheduler/Shell_Scripts/.openai_api_key"
+API_KEY_FILE="$HOME/git/HRPC-YouTube-Scheduler/Shell_Scripts/.openai_api_key"
 MODEL="gpt-4o-mini"
 ENDPOINT="https://api.openai.com/v1/chat/completions"
 
-INPUT_DIR="/Users/odysseus/Documents/Church_Docs/HRPC_Sermon/Transcript"
-OUTPUT_DIR="/Users/odysseus/Documents/Church_Docs/HRPC_Sermon/Summary"
+INPUT_DIR="$HOME/Documents/Church_Docs/HRPC_Sermon/Transcript"
+OUTPUT_DIR="$HOME/Documents/Church_Docs/HRPC_Sermon/Summary"
 
 SYSTEM_PROMPT="You write concise podcast blurbs for weekly church sermons."
 USER_PROMPT=$"Return 2–3 sentences (≈350 characters max), plain English, warm but not “church-insider,” and include zero emojis or hashtags. Emphasise the big idea + everyday relevance. Avoid repeating the title but it's ok to talk about the passage that is being preached on. Use only the transcript below."
@@ -27,7 +27,7 @@ fi
 
 INPUT_FILE="$INPUT_DIR/$1"
 BASENAME="$(basename "$INPUT_FILE" .txt)"
-OUTPUT_FILE="$OUTPUT_DIR/${BASENAME}-blurb.txt"
+OUTPUT_FILE="$OUTPUT_DIR/${BASENAME} Summary.txt"
 
 echo "→ Processing: $INPUT_FILE"
 
