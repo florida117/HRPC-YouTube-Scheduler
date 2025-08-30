@@ -10,7 +10,7 @@ INPUT_DIR="$HOME/Documents/Church_Docs/HRPC_Sermon/Transcript"
 OUTPUT_DIR="$HOME/Documents/Church_Docs/HRPC_Sermon/Summary"
 
 SYSTEM_PROMPT="You write concise podcast blurbs for weekly church sermons."
-USER_PROMPT=$"Return 2–3 sentences (≈350 characters max), plain English, warm but not “church-insider,” and include zero emojis or hashtags. Emphasise the big idea + everyday relevance. Avoid repeating the title but it's ok to talk about the passage that is being preached on. Use only the transcript below."
+USER_PROMPT=$"Return 2–3 sentences (≈350 characters max), plain English, warm but not “church-insider,” and include zero emojis or hashtags. Emphasise the big idea + everyday relevance. Avoid repeating the title but it's ok to talk about the passage that is being preached on. Use only the transcript below. Don't start it with phrases like, 'This week' or similar every single time, some variety would be helpful"
 #==========================
 
 if [[ ! -f "$API_KEY_FILE" ]]; then
