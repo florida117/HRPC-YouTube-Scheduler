@@ -7,3 +7,4 @@ Python/client_secret.json
 Python/log_in.py
 Python/token.pickle
 Shell_Scripts/.openai_api_key
+.DS_Store
