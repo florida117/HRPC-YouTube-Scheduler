@@ -37,19 +37,21 @@ if [ ! -f "$DOWNLOAD_PATH2/$MORNING_VIDEO_NAME.m4a" ]; then
     fi
 fi
 
-#Checks if there is a copy of audio in the iCloud drive folder, if not it proceeds with the download
-if [ ! -f "$DOWNLOAD_PATH2/$EVENING_VIDEO_NAME.m4a" ]; then
-    # Checks if the evening video livestream has finished then downloads it if true
-    if yt-dlp --flat-playlist --skip-download --print "%(is_live)s" "https://www.youtube.com/watch?v=$EVENING_VIDEO_URL" | grep -q "False"; then
-        # Delete the local file
-        rm "$DOWNLOAD_PATH1/$EVENING_VIDEO_NAME.m4a"
-        # Download the video in m4a audio format
-        yt-dlp -x --audio-format m4a -o "$DOWNLOAD_PATH1/%(title)s.%(ext)s" "https://www.youtube.com/watch?v=$EVENING_VIDEO_URL"
-        # Copy to iCloud
-        cp "$DOWNLOAD_PATH1/$EVENING_VIDEO_NAME.m4a" "$DOWNLOAD_PATH2/"
-        ffmpeg -y -i "$DOWNLOAD_PATH1/$EVENING_VIDEO_NAME.m4a" -af "dynaudnorm=f=200:g=15, loudnorm=I=-16:TP=-1.5:LRA=8" -b:a 64k "$DOWNLOAD_PATH3/$EVENING_VIDEO_NAME.mp3"
-        New_Name_Evening="${EVENING_VIDEO_NAME//Service /Service Sermon }"
-        mv "$DOWNLOAD_PATH3/$EVENING_VIDEO_NAME.mp3" "$DOWNLOAD_PATH3/$New_Name_Evening.mp3"
-        $HOME/hrpc_po.sh "Download of $EVENING_VIDEO_NAME finished successfully"
+if [ -f "$HOME/git/HRPC-YouTube-Scheduler/Service_Details/eve_yes.txt" ]; then
+    #Checks if there is a copy of audio in the iCloud drive folder, if not it proceeds with the download
+    if [ ! -f "$DOWNLOAD_PATH2/$EVENING_VIDEO_NAME.m4a" ]; then
+        # Checks if the evening video livestream has finished then downloads it if true
+        if yt-dlp --flat-playlist --skip-download --print "%(is_live)s" "https://www.youtube.com/watch?v=$EVENING_VIDEO_URL" | grep -q "False"; then
+            # Delete the local file
+            rm "$DOWNLOAD_PATH1/$EVENING_VIDEO_NAME.m4a"
+            # Download the video in m4a audio format
+            yt-dlp -x --audio-format m4a -o "$DOWNLOAD_PATH1/%(title)s.%(ext)s" "https://www.youtube.com/watch?v=$EVENING_VIDEO_URL"
+            # Copy to iCloud
+            cp "$DOWNLOAD_PATH1/$EVENING_VIDEO_NAME.m4a" "$DOWNLOAD_PATH2/"
+            ffmpeg -y -i "$DOWNLOAD_PATH1/$EVENING_VIDEO_NAME.m4a" -af "dynaudnorm=f=200:g=15, loudnorm=I=-16:TP=-1.5:LRA=8" -b:a 64k "$DOWNLOAD_PATH3/$EVENING_VIDEO_NAME.mp3"
+            New_Name_Evening="${EVENING_VIDEO_NAME//Service /Service Sermon }"
+            mv "$DOWNLOAD_PATH3/$EVENING_VIDEO_NAME.mp3" "$DOWNLOAD_PATH3/$New_Name_Evening.mp3"
+            $HOME/hrpc_po.sh "Download of $EVENING_VIDEO_NAME finished successfully"
+        fi
     fi
 fi
