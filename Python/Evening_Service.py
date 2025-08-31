@@ -4,6 +4,7 @@ import pickle
 import time
 import pytz
 import calendar
+import subprocess
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
@@ -226,7 +227,9 @@ def main():
     write_title(home_dir)
     write_broadcastid(broadcast_id, home_dir)
 
-    print("Live broadcast has been successfully created and categorized as Nonprofits & Activism.")
+    msg = f"Evening broadcast has been successfully created and categorized as Nonprofits & Activism."
+    print(msg)
+    send_notification(msg)
 
 if __name__ == "__main__":
     main()
