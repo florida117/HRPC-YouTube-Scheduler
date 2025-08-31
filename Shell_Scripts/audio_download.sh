@@ -37,6 +37,7 @@ if [ ! -f "$DOWNLOAD_PATH2/$MORNING_VIDEO_NAME.m4a" ]; then
     fi
 fi
 
+# First, checks if there is a scheduled evening service. If not it skips any attempt to download.
 if [ -f "$HOME/git/HRPC-YouTube-Scheduler/Service_Details/eve_yes.txt" ]; then
     #Checks if there is a copy of audio in the iCloud drive folder, if not it proceeds with the download
     if [ ! -f "$DOWNLOAD_PATH2/$EVENING_VIDEO_NAME.m4a" ]; then
