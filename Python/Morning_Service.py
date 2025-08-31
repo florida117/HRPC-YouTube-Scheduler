@@ -13,6 +13,15 @@ from googleapiclient.http import MediaFileUpload
 import logging
 logging.basicConfig(level=logging.INFO)
 
+HOME = os.path.expanduser("~")
+NOTIFY = os.path.join(HOME, "hrpc_po.sh")  # push notification script
+
+def send_notification(message: str):
+    if os.path.isfile(NOTIFY) and os.access(NOTIFY, os.X_OK):
+        subprocess.run([NOTIFY, message])
+    else:
+        print("⚠️ Notification script not found or not executable")
+
 # Function for OAuth authentication
 def authenticate(home_dir):
     SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
