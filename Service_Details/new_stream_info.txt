@@ -1,0 +1,3 @@
+Stream ID: JgRDQzkDs-GgkPgmjNx5Ng1761298416673072
+Stream Key: bvhh-hprg-5xjy-90e0-71a9
+RTMP URL: rtmp://a.rtmp.youtube.com/live2

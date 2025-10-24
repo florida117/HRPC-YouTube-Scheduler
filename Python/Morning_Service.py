@@ -200,7 +200,7 @@ def main():
     youtube = create_youtube_client(credentials)
 
     # Create a live stream
-    stream_id = "JgRDQzkDs-GgkPgmjNx5Ng1600593527685052"  #create_live_stream(youtube)
+    STREAM_ID = "JgRDQzkDs-GgkPgmjNx5Ng1761298416673072"  #create_live_stream(youtube)
 
     # Get the video ID
     video_id = get_video_id(youtube)
@@ -209,7 +209,7 @@ def main():
     SERVICE_TITLE = "HRPC Sunday Morning Service " + str(NEXT_SUNDAY_DAY) + " " + str(NEXT_SUNDAY_MONTH) + " " + str(NEXT_SUNDAY_YEAR)
     
     # Create a live broadcast
-    BROADCAST_ID = create_live_broadcast(youtube, video_id, stream_id, HOME, SERVICE_TITLE)
+    BROADCAST_ID = create_live_broadcast(youtube, video_id, STREAM_ID, HOME, SERVICE_TITLE)
 
     # Bind the broadcast to the livestream
     bind_broadcast(youtube, BROADCAST_ID, stream_id)
