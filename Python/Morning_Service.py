@@ -131,7 +131,7 @@ def set_video_category(youtube, video_id, category_id):
         raise
 
 # Create a live broadcast
-def create_live_broadcast(youtube, video_id, stream_id, HOME, SERVICE_TITLE):
+def create_live_broadcast(youtube, video_id, STREAM_ID, HOME, SERVICE_TITLE):
     request = youtube.liveBroadcasts().insert(
         part="snippet,status,contentDetails",
         body={
@@ -162,11 +162,11 @@ def create_live_broadcast(youtube, video_id, stream_id, HOME, SERVICE_TITLE):
 
     return BROADCAST_ID
 
-def bind_broadcast(youtube, BROADCAST_ID, stream_id):
+def bind_broadcast(youtube, BROADCAST_ID, STREAM_ID):
   bind_broadcast_response = youtube.liveBroadcasts().bind(
     part="id,contentDetails",
     id=BROADCAST_ID,
-    streamId=stream_id
+    streamId=STREAM_ID
   ).execute()
 
 # Get the video ID from your channel
@@ -212,7 +212,7 @@ def main():
     BROADCAST_ID = create_live_broadcast(youtube, video_id, STREAM_ID, HOME, SERVICE_TITLE)
 
     # Bind the broadcast to the livestream
-    bind_broadcast(youtube, BROADCAST_ID, stream_id)
+    bind_broadcast(youtube, BROADCAST_ID, STREAM_ID)
 
     # Set the video category to "Nonprofits & Activism"
     category_id = "29"  # This is the ID for "Nonprofits & Activism"
