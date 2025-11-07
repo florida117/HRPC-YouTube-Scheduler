@@ -207,7 +207,7 @@ def main():
     youtube = create_youtube_client(credentials)
 
     # Create a live stream
-    STREAM_ID= "JgRDQzkDs-GgkPgmjNx5Ng1761298416673072" #create_live_stream(youtube)
+    STREAM_ID= create_live_stream(youtube) #"JgRDQzkDs-GgkPgmjNx5Ng1761298416673072" #create_live_stream(youtube)
 
     # Get the video ID
     VIDEO_ID = get_VIDEO_ID(youtube)
