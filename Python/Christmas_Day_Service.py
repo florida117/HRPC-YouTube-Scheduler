@@ -173,11 +173,11 @@ def get_video_id(youtube):
     # Parse the response
     videos = response.get('items', [])
 
-def write_title(HOME):
-    f = open(HOME + "/git/HRPC-YouTube-Scheduler/Service_Details/christmas_service_title.txt","w")
-    f.write("HRPC Christmas Morning Service" + " " + str(THIS_YEAR))
+def write_title(HOME, SERVICE_TITLE):
+    f = open(HOME + "/git/HRPC-YouTube-Scheduler/Service_Details/morning_service_title.txt","w")
+    f.write(SERVICE_TITLE)
     f.close()
-
+    
 def write_broadcastid(BROADCAST_ID, HOME):
     f = open(HOME + "/git/HRPC-YouTube-Scheduler/Service_Details/christmas_service_id.txt","w")
     f.write(BROADCAST_ID)
@@ -210,10 +210,12 @@ def main():
     set_video_category(youtube, BROADCAST_ID, category_id)
 
     # Write out title and ID
-    write_title(HOME)
+    write_title(HOME, SERVICE_TITLE)
     write_broadcastid(BROADCAST_ID, HOME)
 
-    print("Live broadcast has been successfully created and categorized as Nonprofits & Activism.")
+    MSG = f"Morning service scheduled successfully: {SERVICE_TITLE}"
+    print(MSG)
+    send_notification(MSG)
 
 if __name__ == "__main__":
     main()
