@@ -4,6 +4,7 @@ import pickle
 import time
 import pytz
 import calendar
+import subprocess
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
@@ -13,16 +14,26 @@ from googleapiclient.http import MediaFileUpload
 import logging
 logging.basicConfig(level=logging.INFO)
 
+# Sets the location of the home folder
+HOME = os.path.expanduser("~")
+NOTIFY = os.path.join(HOME, "hrpc_po.sh")  # push notification script
+
+def send_notification(message: str):
+    if os.path.isfile(NOTIFY) and os.access(NOTIFY, os.X_OK):
+        subprocess.run([NOTIFY, message])
+    else:
+        print("⚠️ Notification script not found or not executable")
+
 # Function for OAuth authentication
-def authenticate(home_dir):
+def authenticate(HOME):
     SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
-    credentials_file = home_dir + '/git/HRPC-YouTube-Scheduler/Python/token.pickle'
+    credentials_file = HOME + "/git/HRPC-YouTube-Scheduler/Python/token.pickle"
 
     if os.path.exists(credentials_file):
         with open(credentials_file, 'rb') as token:
             credentials = pickle.load(token)
     else:
-        flow = InstalledAppFlow.from_client_secrets_file(home_dir + '/git/HRPC-YouTube-Scheduler/Python/client_secret.json', scopes=SCOPES)
+        flow = InstalledAppFlow.from_client_secrets_file(HOME + "/git/HRPC-YouTube-Scheduler/Python/client_secret.json", scopes=SCOPES)
         credentials = flow.run_local_server(port=8080)
         with open(credentials_file, 'wb') as token:
             pickle.dump(credentials, token)
@@ -33,31 +44,22 @@ def create_youtube_client(credentials):
     return build('youtube', 'v3', credentials=credentials)
 
 # Specify your timezone
-local_tz = pytz.timezone('Europe/Dublin')
+LOCAL_TZ = pytz.timezone('Europe/Dublin')
 
 def ordinal(n: int):
     if 11 <= (n % 100) <= 13:
-        suffix = 'th'
+        SUFFIX = 'th'
     else:
-        suffix = ['th', 'st', 'nd', 'rd', 'th'][min(n % 10, 4)]
-    return str(n) + suffix
+        SUFFIX = ['th', 'st', 'nd', 'rd', 'th'][min(n % 10, 4)]
+    return str(n) + SUFFIX
 
-# Calculate the date for next Sunday
-#today = datetime.now(local_tz)
-#days_ahead = 6 - today.weekday()  # 6 is Sunday
-#if days_ahead <= 0:
-#    days_ahead += 7
-#next_sunday = today + timedelta(days=days_ahead)
-#next_sunday_day = ordinal(next_sunday.day)
-#next_sunday_month = calendar.month_name[next_sunday.month]
-now = datetime.now(local_tz)
-this_year = now.year
-christmas = datetime(now.year, 12, 25, 10, 0)
-# Set the time to 11 AM
-#next_sunday = next_sunday.replace(hour=10, minute=0, second=0, microsecond=0)
+# Sets the date and time for the Christmas Day service
+NOW = datetime.now(LOCAL_TZ)
+THIS_YEAR = NOW.year
+CHRISTMAS = datetime(NOW.year, 12, 25, 10, 0)
 
 # Convert to UTC
-scheduled_start_time = christmas.astimezone(pytz.UTC)
+scheduled_start_time = CHRISTMAS.astimezone(pytz.UTC)
 
 # Convert to RFC3339 format
 scheduled_start_time_rfc3339 = scheduled_start_time.isoformat()
@@ -121,13 +123,13 @@ def set_video_category(youtube, video_id, category_id):
         raise
 
 # Create a live broadcast
-def create_live_broadcast(youtube, video_id, stream_id, home_dir):
+def create_live_broadcast(youtube, video_id, STREAM_ID, HOME, SERVICE_TITLE):
     request = youtube.liveBroadcasts().insert(
         part="snippet,status,contentDetails",
         body={
             "snippet": {
-                "title": "HRPC Christmas Morning Service" + " " + str(this_year) ,
-                "description": "Christmas Morning Service from Hamilton Road Presbyterian Church",
+                "title": SERVICE_TITLE,
+                "description": "Sunday Service from Hamilton Road Presbyterian Church",
                 "scheduledStartTime": scheduled_start_time_rfc3339,
             },
             "status": {
@@ -140,23 +142,22 @@ def create_live_broadcast(youtube, video_id, stream_id, home_dir):
         }
     )
     response = request.execute()
-    broadcast_id = response["id"]
+    BROADCAST_ID = response["id"]
 
-    thumbnail_path = home_dir + "/git/HRPC-YouTube-Scheduler/maxresdefault.jpg"
+    thumbnail_path = HOME + "/git/HRPC-YouTube-Scheduler/maxresdefault.jpg"
     try:
-        request = youtube.thumbnails().set(videoId=broadcast_id, media_body=MediaFileUpload(thumbnail_path))
+        request = youtube.thumbnails().set(videoId=BROADCAST_ID, media_body=MediaFileUpload(thumbnail_path))
         response = request.execute()
-        #print(response)
     except Exception as ex:
         print(f'error: {ex}')
 
-    return broadcast_id
+    return BROADCAST_ID
 
-def bind_broadcast(youtube, broadcast_id, stream_id):
+def bind_broadcast(youtube, BROADCAST_ID, STREAM_ID):
   bind_broadcast_response = youtube.liveBroadcasts().bind(
     part="id,contentDetails",
-    id=broadcast_id,
-    streamId=stream_id
+    id=BROADCAST_ID,
+    streamId=STREAM_ID
   ).execute()
 
 # Get the video ID from your channel
@@ -172,45 +173,45 @@ def get_video_id(youtube):
     # Parse the response
     videos = response.get('items', [])
 
-def write_title(home_dir):
-    f = open(home_dir + "/git/HRPC-YouTube-Scheduler/Service_Details/christmas_service_title.txt","w")
-    f.write("HRPC Christmas Morning Service" + " " + str(this_year))
+def write_title(HOME):
+    f = open(HOME + "/git/HRPC-YouTube-Scheduler/Service_Details/christmas_service_title.txt","w")
+    f.write("HRPC Christmas Morning Service" + " " + str(THIS_YEAR))
     f.close()
 
-def write_broadcastid(broadcast_id, home_dir):
-    f = open(home_dir + "/git/HRPC-YouTube-Scheduler/Service_Details/christmas_service_id.txt","w")
-    f.write(broadcast_id)
+def write_broadcastid(BROADCAST_ID, HOME):
+    f = open(HOME + "/git/HRPC-YouTube-Scheduler/Service_Details/christmas_service_id.txt","w")
+    f.write(BROADCAST_ID)
     f.close()
 
 def main():
-    # Sets the location of the home folder
-    home_dir = os.path.expanduser("~")
-
     # Authenticate using OAuth
-    credentials = authenticate(home_dir)
+    credentials = authenticate(HOME)
 
     # Create an authorized client for the YouTube API
     youtube = create_youtube_client(credentials)
 
     # Create a live stream
-    stream_id = "JgRDQzkDs-GgkPgmjNx5Ng1600593527685052"  #create_live_stream(youtube)
+    STREAM_ID = create_live_stream(youtube)
 
     # Get the video ID
     video_id = get_video_id(youtube)
 
+    # Build the service title
+    SERVICE_TITLE = "HRPC Christmas Morning Service" + " " + str(THIS_YEAR)
+    
     # Create a live broadcast
-    broadcast_id = create_live_broadcast(youtube, video_id, stream_id, home_dir)
+    BROADCAST_ID = create_live_broadcast(youtube, video_id, STREAM_ID, HOME, SERVICE_TITLE)
 
     # Bind the broadcast to the livestream
-    bind_broadcast(youtube, broadcast_id, stream_id)
+    bind_broadcast(youtube, BROADCAST_ID, STREAM_ID)
 
     # Set the video category to "Nonprofits & Activism"
     category_id = "29"  # This is the ID for "Nonprofits & Activism"
-    set_video_category(youtube, broadcast_id, category_id)
+    set_video_category(youtube, BROADCAST_ID, category_id)
 
     # Write out title and ID
-    write_title(home_dir)
-    write_broadcastid(broadcast_id, home_dir)
+    write_title(HOME)
+    write_broadcastid(BROADCAST_ID, HOME)
 
     print("Live broadcast has been successfully created and categorized as Nonprofits & Activism.")
 
