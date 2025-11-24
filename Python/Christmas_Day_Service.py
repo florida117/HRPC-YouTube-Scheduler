@@ -129,7 +129,7 @@ def create_live_broadcast(youtube, video_id, STREAM_ID, HOME, SERVICE_TITLE):
         body={
             "snippet": {
                 "title": SERVICE_TITLE,
-                "description": "Sunday Service from Hamilton Road Presbyterian Church",
+                "description": "Christmas Day Service from Hamilton Road Presbyterian Church",
                 "scheduledStartTime": scheduled_start_time_rfc3339,
             },
             "status": {
@@ -174,7 +174,7 @@ def get_video_id(youtube):
     videos = response.get('items', [])
 
 def write_title(HOME, SERVICE_TITLE):
-    f = open(HOME + "/git/HRPC-YouTube-Scheduler/Service_Details/morning_service_title.txt","w")
+    f = open(HOME + "/git/HRPC-YouTube-Scheduler/Service_Details/christmas_service_title.txt","w")
     f.write(SERVICE_TITLE)
     f.close()
     
