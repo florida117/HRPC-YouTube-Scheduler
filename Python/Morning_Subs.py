@@ -1,8 +1,19 @@
 import os
 import pickle
+import sys
+import subprocess
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
+
+HOME = os.path.expanduser("~")
+NOTIFY = os.path.join(HOME, "hrpc_po.sh")  # push notification script
+
+def send_notification(message: str):
+    if os.path.isfile(NOTIFY) and os.access(NOTIFY, os.X_OK):
+        subprocess.run([NOTIFY, message])
+    else:
+        print("⚠️ Notification script not found or not executable")
 
 # Function for OAuth authentication
 def authenticate(home_dir):
@@ -83,4 +94,15 @@ if __name__ == '__main__':
 
     delete_existing_subtitles(VIDEO_ID, LANGUAGE, home_dir)
     SUBTITLE_FILE_PATH = (home_dir + "/Documents/Church_Docs/HRPC_Subtitles/" + NAME + ".srt")
-    upload_subtitles(VIDEO_ID, LANGUAGE, NAME, SUBTITLE_FILE_PATH, home_dir)
+
+    try:
+        upload_subtitles(VIDEO_ID, LANGUAGE, NAME, SUBTITLE_FILE_PATH, home_dir)
+        msg = f"Morning subtitles successfully uploaded to YouTube for {NAME}"
+        print(msg)
+        send_notification(msg)
+        sys.exit(0)
+    except Exception as e:
+        err = f"Morning subtitles FAILED uploaded to YouTube for {NAME}"
+        print(err, file=sys.stderr)
+        send_notification(err)
+        sys.exit(1)
