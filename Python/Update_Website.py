@@ -35,7 +35,7 @@ if no_evening.exists():
 
 # --- Step 1: Fetch the current page content ---
 GET_RESPONSE = requests.get(
-    f'{WP_URL}/pages/{PAGE_ID}',
+    f'{WP_URL}/pages/{PAGE_ID}?context=edit',
     auth=(USERNAME, PASSWORD)
 )
 

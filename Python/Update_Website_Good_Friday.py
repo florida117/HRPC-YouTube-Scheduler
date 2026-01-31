@@ -1,46 +1,83 @@
+import re
 import requests
 import os
 from log_in import secrets
+import subprocess
 
 # Sets the location of the home folder
-home_dir = os.path.expanduser("~")
+HOME = os.path.expanduser("~")
+NOTIFY = os.path.join(HOME, "hrpc_po.sh")  # push notification script
+
+def send_notification(message: str):
+    if os.path.isfile(NOTIFY) and os.access(NOTIFY, os.X_OK):
+        subprocess.run([NOTIFY, message])
+    else:
+        print("⚠️ Notification script not found or not executable")
 
 # WordPress API credentials and endpoint
-wp_url = 'https://hrpc.org.uk/wp-json/wp/v2'
-page_id = '8157'  # Replace with your page ID. For videos, 8157
-username = secrets.get('website_user_name')
-password = secrets.get('website_password')
+WP_URL = 'https://hrpc.org.uk/wp-json/wp/v2'
+PAGE_ID = '8157'  # Replace with your page ID. For videos, 8157
+USERNAME = secrets.get('website_user_name')
+PASSWORD = secrets.get('website_password')
 
-with open(home_dir + '/git/HRPC-YouTube-Scheduler/Service_Details/good_friday_service_id.txt', 'r') as file:
-    # Read the contents of the file
-    video_url_1 = 'https://www.youtube.com/watch?v=' + file.read()
-    
-with open(home_dir + '/git/HRPC-YouTube-Scheduler/Service_Details/good_friday_service_id.txt', 'r') as file:
-    # Read the contents of the file
-    video_url_2 = ''
+# Read the Good Friday service video ID from file
+with open(HOME + '/git/HRPC-YouTube-Scheduler/Service_Details/good_friday_service_id.txt', 'r') as file:
+    VIDEO_URL_1 = 'https://www.youtube.com/watch?v=' + file.read().strip()
 
-# Format the video URLs as embedded links
-page_content = """[vc_row type="full_width_content" full_screen_row_position="middle" bg_image="7083" bg_position="center bottom" bg_repeat="no-repeat" scene_position="center" text_color="light" text_align="left" top_padding="16%" bottom_padding="5%" enable_gradient="true" color_overlay="#007daa" color_overlay_2="#004f7c" gradient_direction="left_t_to_right_b" overlay_strength="0.8" shape_divider_position="bottom" shape_type=""][vc_column centered_text="true" column_padding="no-extra-padding" column_padding_position="all" background_color_opacity="1" background_hover_color_opacity="1" column_shadow="none" column_border_radius="none" width="1/1" tablet_text_alignment="default" phone_text_alignment="default" column_border_width="none" column_border_style="solid"][vc_row_inner column_margin="default" text_align="left"][vc_column_inner column_padding="padding-1-percent" column_padding_position="bottom" background_color_opacity="1" background_hover_color_opacity="1" column_shadow="none" column_border_radius="none" width="1/1" column_border_width="none" column_border_style="solid"][vc_column_text]
-<h1>Videos</h1>
-[/vc_column_text][/vc_column_inner][/vc_row_inner][/vc_column][/vc_row][vc_row type="in_container" full_screen_row_position="middle" scene_position="center" text_color="dark" text_align="left" overlay_strength="0.3" shape_divider_position="bottom"][vc_column column_padding="no-extra-padding" column_padding_position="all" background_color_opacity="1" background_hover_color_opacity="1" column_shadow="none" column_border_radius="none" width="1/1" tablet_text_alignment="default" phone_text_alignment="default" column_border_width="none" column_border_style="solid"][vc_column_text css=".vc_custom_1709805682004{margin-top: 20px !important;margin-right: 20px !important;margin-bottom: 20px !important;margin-left: 20px !important;}"]
-<h5>If you're unable to be with us in person, we invite you to join us for Sunday worship via our online services. We'd also love to keep in touch with you! If you are not yet registered on ChurchSuite please get in touch by emailing <a href="mailto:office@hrpc.org.uk">office@hrpc.org.uk</a></h5>
-[/vc_column_text][vc_row_inner column_margin="default" text_align="left"][vc_column_inner column_padding="no-extra-padding" column_padding_position="all" background_color_opacity="1" background_hover_color_opacity="1" column_shadow="none" column_border_radius="none" width="1/2" column_border_width="none" column_border_style="solid"][vc_video link=""" + '"' + video_url_1 + '"' + """][/vc_column_inner][vc_column_inner column_padding="no-extra-padding" column_padding_position="all" background_color_opacity="1" background_hover_color_opacity="1" column_shadow="none" column_border_radius="none" width="1/2" column_border_width="none" column_border_style="solid"][vc_video link=""" + '"' + video_url_2 + '"' + """][/vc_column_inner][/vc_row_inner][divider line_type="Full Width Line" line_thickness="1" divider_color="default" custom_height="5"][vc_custom_heading text="Previous services" google_fonts="font_family:Montserrat%3Aregular%2C700|font_style:400%20regular%3A400%3Anormal"][vc_column_text]Services from previous weeks can be accessed on our YouTube channel[/vc_column_text][nectar_btn size="small" button_style="regular" button_color_2="Accent-Color" icon_family="none" url="https://www.youtube.com/user/hrpcbangor" text="HRPC YouTube Channel" margin_top="10" margin_right="40%" margin_left="40%"][/vc_column][/vc_row]"""
+# Second video slot is intentionally left blank for Good Friday
+VIDEO_URL_2 = ''
 
-# The data payload for the update
-data = {
-    'content': page_content
+# --- Step 1: Fetch the current page content ---
+GET_RESPONSE = requests.get(
+    f'{WP_URL}/pages/{PAGE_ID}?context=edit',
+    auth=(USERNAME, PASSWORD)
+)
+
+if GET_RESPONSE.status_code != 200:
+    MSG = f"Failed to fetch page: {GET_RESPONSE.status_code}"
+    print(MSG)
+    send_notification(MSG)
+    exit(1)
+
+# The REST API returns content as { "raw": "...", "rendered": "..." }.
+# We need 'raw' so that shortcodes are preserved as-is.
+PAGE_CONTENT = GET_RESPONSE.json()['content']['raw']
+
+# --- Step 2: Replace the video URLs in the fetched content ---
+# Matches [vc_video link="<anything up to the next quote>"]
+# Group 1 captures the prefix including the opening quote so we can splice cleanly.
+VC_VIDEO_PATTERN = r'(\[vc_video\s+link=")[^"]*'
+
+matches = list(re.finditer(VC_VIDEO_PATTERN, PAGE_CONTENT))
+
+if len(matches) < 2:
+    MSG = f"Warning: expected 2 vc_video shortcodes, found {len(matches)}. Aborting update."
+    print(MSG)
+    send_notification(MSG)
+    exit(1)
+
+# Replace both: first gets the Good Friday video, second is set to blank
+new_urls = [VIDEO_URL_1, VIDEO_URL_2]
+for match, url in reversed(list(zip(matches[:2], new_urls))):
+    PAGE_CONTENT = PAGE_CONTENT[:match.end(1)] + url + PAGE_CONTENT[match.end():]
+
+# --- Step 3: POST the updated content back ---
+DATA = {
+    'content': PAGE_CONTENT
 }
 
-# Making the request
-response = requests.post(
-    f'{wp_url}/pages/{page_id}',
-    json=data,
-    auth=(username, password)  # Basic Auth
+RESPONSE = requests.post(
+    f'{WP_URL}/pages/{PAGE_ID}',
+    json=DATA,
+    auth=(USERNAME, PASSWORD)
 )
 
 # Check if the request was successful
-if response.status_code == 200:
-    print("Page updated successfully!")
+if RESPONSE.status_code == 200:
+    MSG = "Page updated successfully!"
+    print(MSG)
+    send_notification(MSG)
 else:
-    print(f"Failed to update page: {response.status_code}")
-    print(response.text)
+    MSG = f"Failed to update page: {RESPONSE.status_code}"
+    print(MSG)
+    send_notification(MSG)
